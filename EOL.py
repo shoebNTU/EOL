@@ -13,12 +13,12 @@ st.set_page_config(page_title='EOL',
                    layout='wide', 
                    initial_sidebar_state='expanded')
 
-st.subheader('Economic Optimal Life')
+st.header('Economic Optimal Life')
 
 # st.sidebar.title("Upload an excel file")
 # temp = st.sidebar.file_uploader(label='', type=['xlsx'])
 
-st.header("Upload an excel file")
+st.subheader("Upload an excel file")
 temp = st.file_uploader(label='', type=['xlsx'])
 
 if temp: 
