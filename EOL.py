@@ -23,7 +23,7 @@ temp = st.file_uploader(label='', type=['xlsx'])
 
 if temp: 
     if st.button('Compute EOL',key=456):
-        df_input = pd.read_excel('EOL.xlsx')
+        df_input = pd.read_excel(temp)
         df_input['capex'].fillna(0,inplace=True)
         df_input['interest_rate'].fillna(method='ffill',inplace=True)
         df_input['interest_rate'].fillna(0.0)
