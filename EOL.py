@@ -40,8 +40,10 @@ if temp:
         df_input['opex_PV_cumsum'] = opex_PV_cumsum
         df_input['opex+capex'] = (capex_PV_cumsum+opex_PV_cumsum)
         df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum)/df_input.annuity_factor) #+ 
+        df_input['opex_annualized'] = opex_PV_cumsum/df_input.annuity_factor
+        df_input['capex_annualized'] = capex_PV_cumsum/df_input.annuity_factor
 
-        fig=px.line(df_input,x=df_input.year,y=[df_input.opex,df_input.capex,df_input.EAC],markers=True)
+        fig=px.line(df_input,x=df_input.year,y=[df_input.opex,df_input.opex_annualized,df_input.capex,df_input.capex_annualized,df_input.EAC],markers=True)
         fig.update_yaxes(title='$')
         fig.add_vline(x=df_input['year'][df_input['EAC'].argmin()], line_width=3, line_dash="dash", line_color="olive",annotation_text='EOL')
         fig.add_annotation(                 x=0.5,
