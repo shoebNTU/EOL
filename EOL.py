@@ -24,7 +24,7 @@ with st.expander('What is Economic Optimal Life (EOL)?',expanded=False):
     - Capital recovery cost (average first cost), computed from the first cost (purchase price) of the machine. 
     - Average operating and maintenance cost (O & M cost)
     - Total cost which is the sum of capital recovery cost (average first cost) and average maintenance cost.  
-    A typical shape of each of the above costs with respect to life of the machine is shown in below Figure
+    A typical shape of each of the above costs with respect to life of the machine is shown in below Figure.
     """)
 
     st.image('./eol.JPG',caption='Figure: Chart showing economic life',width=400)
