@@ -27,7 +27,7 @@ with st.expander('What is Economic Optimal Life (EOL)?',expanded=False):
     A typical shape of each of the above costs with respect to life of the machine is shown in below Figure.
     """)
 
-    st.image('./eol.JPG',caption='Figure: Chart showing economic life',width=400)
+    st.image('./eol_colour.JPG',caption='Figure: Chart showing economic life',width=400)
 
     st.markdown("""From above Figure, it is clear that the capital recovery cost (average first cost) goes on decreasing with the life of the machine and the average operating and maintenance cost goes on increasing with the life of the machine. From the beginning, the total cost continues to decrease up to a particular life and then it starts increasing. The point where the total cost is _**minimum**_ is called the _**economic optimal life**_ of the machine. """)
 
