@@ -31,8 +31,8 @@ if temp:
         df_input['annuity_factor'] = ((1-(1+df_input.interest_rate)**(-(df_input.index+1)))/df_input.interest_rate)
         df_input.annuity_factor.fillna(df_input.index.to_series()+1,inplace=True)
         opex_PV_cumsum = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1)).cumsum()
-        capex_PV = (df_input.capex/(1+df_input.interest_rate)**(df_input.index+1))
-        capex_PV.iloc[0] = df_input.capex.iloc[0]
+        capex_PV = (df_i-nput.capex/(1+df_input.interest_rate)**(df_input.index))
+        # capex_PV.iloc[0] = df_input.capex.iloc[0]
         capex_PV_cumsum = capex_PV.cumsum()
         df_input['capex_PV'] = capex_PV
         df_input['capex_PV_cumsum'] = capex_PV_cumsum
@@ -45,7 +45,7 @@ if temp:
             df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate)**(df_input.index+1))
         except:
             df_input['salvage_PV'] = 0.0
-            
+
         df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum- df_input['salvage_PV'])/df_input.annuity_factor)  #+         
 
         fig=px.line(df_input,x=df_input.year,y=[df_input.opex,df_input.opex_annualized,df_input.capex,df_input.capex_annualized,df_input.EAC],markers=True)
