@@ -39,9 +39,14 @@ if temp:
         df_input['opex_PV'] = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1))
         df_input['opex_PV_cumsum'] = opex_PV_cumsum
         df_input['opex+capex'] = (capex_PV_cumsum+opex_PV_cumsum)
-        df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum)/df_input.annuity_factor) #+ 
         df_input['opex_annualized'] = opex_PV_cumsum/df_input.annuity_factor
         df_input['capex_annualized'] = capex_PV_cumsum/df_input.annuity_factor
+        try:
+            df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate)**(df_input.index+1))
+        except:
+            df_input['salvage_PV'] = 0.0
+            
+        df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum- df_input['salvage_PV'])/df_input.annuity_factor)  #+         
 
         fig=px.line(df_input,x=df_input.year,y=[df_input.opex,df_input.opex_annualized,df_input.capex,df_input.capex_annualized,df_input.EAC],markers=True)
         fig.update_yaxes(title='$')
