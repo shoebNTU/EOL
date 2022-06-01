@@ -18,13 +18,40 @@ st.header('Economic Optimal Life')
 # st.sidebar.title("Upload an excel file")
 # temp = st.sidebar.file_uploader(label='', type=['xlsx'])
 
-st.subheader("Upload an excel file")
+with st.expander('What is Economic Optimal Life (EOL)?',expanded=False):
+    st.markdown("""
+    Any asset will have the following cost components: 
+    - Capital recovery cost (average first cost), computed from the first cost (purchase price) of the machine. 
+    - Average operating and maintenance cost (O & M cost)
+    - Total cost which is the sum of capital recovery cost (average first cost) and average maintenance cost.  
+    A typical shape of each of the above costs with respect to life of the machine is shown in below Figure
+    """)
+
+    st.image('./eol.jpg',caption='Figure: Chart showing economic life',width=400)
+
+    st.markdown("""From above Figure, it is clear that the capital recovery cost (average first cost) goes on decreasing with the life of the machine and the average operating and maintenance cost goes on increasing with the life of the machine. From the beginning, the total cost continues to decrease up to a particular life and then it starts increasing. The point where the total cost is _**minimum**_ is called the _**economic optimal life**_ of the machine. """)
+
+with st.expander('How to use this app?',expanded=False):
+    template_df = pd.read_excel('./EOL_template.xlsx')
+    template_df.fillna(0.0,inplace=True)
+
+    str_columns = str(template_df.columns.tolist())
+    for i in """.'[]".""":
+        str_columns = str_columns.replace(i,'')
+    st.info(f"Please upload an excel file containing the following columns - **{str_columns}**  . See an example template below - ")
+    
+    st.dataframe(template_df)
+
+st.subheader(f"Upload an excel file")
+st.info(f"Please upload an excel file in the same format as the shared template (i.e. with columns - **{str_columns}**)  \n Please ensure the column names match the ones mentioned here.")
 temp = st.file_uploader(label='', type=['xlsx'])
 
 if temp: 
     if st.button('Compute EOL',key=456):
         df_input = pd.read_excel(temp)
-        df_input['capex'].fillna(0,inplace=True)
+        df_input.columns= df_input.columns.str.strip().str.lower()
+        df_input['capex'].fillna(0.0,inplace=True)
+        df_input['opex'].fillna(0.0,inplace=True)
         df_input['interest_rate'].fillna(method='ffill',inplace=True)
         df_input['interest_rate'].fillna(0.0)
         df_input['interest_rate'] = df_input['interest_rate']/100.0
@@ -69,8 +96,21 @@ if temp:
             ))
         st.plotly_chart (fig, use_container_width=True)
 
-        with st.expander('Show calculation table',expanded=False):
-            st.write(df_input.style.format(subset=df_input.columns[df_input.columns.str.contains('pex|annuity|interest|eac',case=False)].tolist(),formatter="{:.2f}"))
-            # st.write(df_input)
-else:
-    st.info("Please upload an excel file in the same format as the shared template")
+        with st.expander('Show calculation table',expanded=False):  
+            @st.cache
+            def convert_df(df):
+                # IMPORTANT: Cache the conversion to prevent computation on every rerun
+                return df.to_csv().encode('utf-8')
+            csv = convert_df(df_input)
+
+            st.download_button(
+                label="Download calculation table as CSV",
+                data=csv,
+                file_name='output.csv',
+                mime='text/csv',
+            )         
+            st.write(df_input.style.format(subset=df_input.columns[df_input.columns.str.contains('pex|annuity|interest|eac|salvage',case=False)].tolist(),formatter="{:.2f}"))
+
+           
+
+           
