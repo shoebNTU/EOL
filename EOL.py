@@ -31,7 +31,7 @@ if temp:
         df_input['annuity_factor'] = ((1-(1+df_input.interest_rate)**(-(df_input.index+1)))/df_input.interest_rate)
         df_input.annuity_factor.fillna(df_input.index.to_series()+1,inplace=True)
         opex_PV_cumsum = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1)).cumsum()
-        capex_PV = (df_i-nput.capex/(1+df_input.interest_rate)**(df_input.index))
+        capex_PV = (df_input.capex/(1+df_input.interest_rate)**(df_input.index))
         # capex_PV.iloc[0] = df_input.capex.iloc[0]
         capex_PV_cumsum = capex_PV.cumsum()
         df_input['capex_PV'] = capex_PV
