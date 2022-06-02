@@ -68,10 +68,13 @@ if temp:
         df_input['opex+capex'] = (capex_PV_cumsum+opex_PV_cumsum)
         df_input['opex_annualized'] = opex_PV_cumsum/df_input.annuity_factor
         df_input['capex_annualized'] = capex_PV_cumsum/df_input.annuity_factor
-        try:
-            df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate)**(df_input.index+1))
-        except:
-            df_input['salvage_PV'] = 0.0
+        if 'salvage_value' not in df_input.columns.tolist():
+            df_input.salvage_value = 0.0
+        # try:
+        df_input.salvage_value.fillna(0.0,inplace=True)
+        df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate)**(df_input.index+1))
+        # except:
+        #     df_input['salvage_PV'] = 0.0
 
         df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum- df_input['salvage_PV'])/df_input.annuity_factor)  #+         
 
