@@ -39,9 +39,7 @@ with st.expander('How to use this app?',expanded=False):
     for i in """.'[]".""":
         str_columns = str_columns.replace(i,'')
 
-    st.text(str_columns)
     st.info(f"Please upload an excel file containing the following columns - **{str_columns}**. See an example template below - ")
-    
     st.dataframe(template_df)
 
 st.subheader(f"Upload an excel file")
