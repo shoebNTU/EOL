@@ -38,7 +38,9 @@ with st.expander('How to use this app?',expanded=False):
     str_columns = str(template_df.columns.tolist())
     for i in """.'[]".""":
         str_columns = str_columns.replace(i,'')
-    st.info(f"Please upload an excel file containing the following columns - **{str_columns}**  . See an example template below - ")
+
+    st.text(str_columns)
+    st.info(f"Please upload an excel file containing the following columns - **{str_columns}**. See an example template below - ")
     
     st.dataframe(template_df)
 
@@ -47,14 +49,17 @@ st.info(f"Please upload an excel file in the same format as the shared template 
 temp = st.file_uploader(label='', type=['xlsx'])
 
 if temp: 
+    df_input = pd.read_excel(temp)
+    df_input.columns= df_input.columns.str.strip().str.lower()
+    df_input['capex'].fillna(0.0,inplace=True)
+    df_input['opex'].fillna(0.0,inplace=True)
+    df_input['interest_rate'].fillna(method='ffill',inplace=True)
+    df_input['interest_rate'].fillna(0.0)
+    ccc1,_ = st.columns([1,4])
+    with ccc1:
+        st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,value=df_input['interest_rate'][0])
+    df_input['interest_rate'] = df_input['interest_rate']/100.0
     if st.button('Compute EOL',key=456):
-        df_input = pd.read_excel(temp)
-        df_input.columns= df_input.columns.str.strip().str.lower()
-        df_input['capex'].fillna(0.0,inplace=True)
-        df_input['opex'].fillna(0.0,inplace=True)
-        df_input['interest_rate'].fillna(method='ffill',inplace=True)
-        df_input['interest_rate'].fillna(0.0)
-        df_input['interest_rate'] = df_input['interest_rate']/100.0
         df_input['annuity_factor'] = ((1-(1+df_input.interest_rate)**(-(df_input.index+1)))/df_input.interest_rate)
         df_input.annuity_factor.fillna(df_input.index.to_series()+1,inplace=True)
         opex_PV_cumsum = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1)).cumsum()
