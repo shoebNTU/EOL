@@ -33,14 +33,16 @@ with st.expander('What is Economic Optimal Life (EOL)?',expanded=False):
 
 with st.expander('How to use this app?',expanded=False):
     template_df = pd.read_excel('./EOL_template.xlsx')
-    template_df.fillna(0.0,inplace=True)
-
+    for col in template_df.columns:
+        template_df[col] = template_df.astype(str)
+        template_df[col] = template_df.str.replace('nan','')
+        
     str_columns = str(template_df.columns.tolist())
     for i in """.'[]".""":
         str_columns = str_columns.replace(i,'')
 
     st.info(f"Please upload an excel file containing the following columns - **{str_columns}**. See an example template below - ")
-    st.dataframe(template_df)
+    st.table(template_df)
 
 st.subheader(f"Upload an excel file")
 st.info(f"Please upload an excel file in the same format as the shared template (i.e. with columns - **{str_columns}**)  \n Please ensure the column names match the ones mentioned here.")
@@ -58,17 +60,16 @@ if temp:
         interest = st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,value=df_input['interest_rate'][0])
     
     df_input['interest_rate'] = interest
-    df_input['interest_rate'] = df_input['interest_rate']/100.0
     if st.button('Compute EOL',key=456):
-        df_input['annuity_factor'] = ((1-(1+df_input.interest_rate)**(-(df_input.index+1)))/df_input.interest_rate)
+        df_input['annuity_factor'] = ((1-(1+df_input.interest_rate*0.01)**(-(df_input.index+1)))/(df_input.interest_rate*0.01))
         df_input.annuity_factor.fillna(df_input.index.to_series()+1,inplace=True)
-        opex_PV_cumsum = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1)).cumsum()
-        capex_PV = (df_input.capex/(1+df_input.interest_rate)**(df_input.index))
+        opex_PV_cumsum = (df_input.opex/(1+df_input.interest_rate*0.01)**(df_input.index+1)).cumsum()
+        capex_PV = (df_input.capex/(1+df_input.interest_rate*0.01)**(df_input.index))
         # capex_PV.iloc[0] = df_input.capex.iloc[0]
         capex_PV_cumsum = capex_PV.cumsum()
         df_input['capex_PV'] = capex_PV
         df_input['capex_PV_cumsum'] = capex_PV_cumsum
-        df_input['opex_PV'] = (df_input.opex/(1+df_input.interest_rate)**(df_input.index+1))
+        df_input['opex_PV'] = (df_input.opex/(1+df_input.interest_rate*0.01)**(df_input.index+1))
         df_input['opex_PV_cumsum'] = opex_PV_cumsum
         df_input['opex+capex'] = (capex_PV_cumsum+opex_PV_cumsum)
         df_input['opex_annualized'] = opex_PV_cumsum/df_input.annuity_factor
@@ -76,7 +77,7 @@ if temp:
         if 'salvage_value' not in df_input.columns.tolist():            
             df_input['salvage_value'] = 0.0     
         df_input.salvage_value.fillna(0.0,inplace=True)
-        df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate)**(df_input.index+1))
+        df_input['salvage_PV'] = (df_input.salvage_value/(1+df_input.interest_rate*0.01)**(df_input.index+1))
  
 
         df_input['EAC'] = ((capex_PV_cumsum+opex_PV_cumsum- df_input['salvage_PV'])/df_input.annuity_factor)  #+         
