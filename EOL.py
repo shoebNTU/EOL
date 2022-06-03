@@ -35,7 +35,7 @@ with st.expander('How to use this app?',expanded=False):
     template_df = pd.read_excel('./EOL_template.xlsx')
     for col in template_df.columns:
         template_df[col] = template_df.astype(str)
-        template_df[col] = template_df.str.replace('nan','')
+        template_df[col] = template_df[col].str.replace('nan','')
         
     str_columns = str(template_df.columns.tolist())
     for i in """.'[]".""":
