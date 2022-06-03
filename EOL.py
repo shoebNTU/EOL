@@ -57,7 +57,9 @@ if temp:
     df_input['interest_rate'].fillna(0.0)
     ccc1,_ = st.columns([1,4])
     with ccc1:
-        st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,value=df_input['interest_rate'][0])
+        interest = st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,value=df_input['interest_rate'][0])
+    
+    df_input['interest_rate'] = interest
     df_input['interest_rate'] = df_input['interest_rate']/100.0
     if st.button('Compute EOL',key=456):
         df_input['annuity_factor'] = ((1-(1+df_input.interest_rate)**(-(df_input.index+1)))/df_input.interest_rate)
