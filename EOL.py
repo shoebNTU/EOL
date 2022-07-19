@@ -57,7 +57,7 @@ if temp:
     df_input['interest_rate'].fillna(0.0)
     ccc1,_ = st.columns([1,4])
     with ccc1:
-        interest = st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,value=df_input['interest_rate'][0])
+        interest = st.number_input(label='Please enter interest rate',min_value=0.0,max_value=100.0,step=0.01,value=df_input['interest_rate'][0])
     
     df_input['interest_rate'] = interest
     if st.button('Compute EOL',key=456):
